@@ -18,4 +18,8 @@ class SolidTile extends Tile{
     boundBottom(y, x1, x2){
         return (this.x < x1 && this.x + 1 > x1 || this.x < x2 && this.x + 1 > x2) && this.y + 1 > y;
     }
+
+    getFriction(){
+        return 0;
+    }
 }

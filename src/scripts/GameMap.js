@@ -3,6 +3,8 @@ class GameMap{
         this.inputHandler = inputHandler;
         this.player = new Player(0, 0);
         this.map = [];
+
+        this.pressedUpLastFrame = false;
     }
 
     loadMap(mapStringArray){
@@ -45,7 +47,13 @@ class GameMap{
         }
 
         if(this.inputHandler.pressingUp()){
-            this.player.jump();
+            if(!this.pressedUpLastFrame){
+                this.player.jump();
+            }
+            this.pressedUpLastFrame = true;
+        }else{
+            this.player.stopJump();
+            this.pressedUpLastFrame = false;
         }
 
         let x = Math.floor(this.player.x + PLAYER_WIDTH / 2);
@@ -70,5 +78,13 @@ class GameMap{
         }
 
         this.player.update(elapsedMiliseconds, nearCells);
+    }
+
+    getMapSize(){
+        return [this.map[0].length, this.map.length];
+    }
+    
+    getPlayerPosition(){
+        return [this.player.x, this.player.y];
     }
 }

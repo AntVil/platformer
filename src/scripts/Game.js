@@ -7,12 +7,15 @@ class Game{
 
         this.gameMap.loadMap(
             [
-                "            ",
-                "            ",
-                "         ooo",
-                "           o",
-                "o @      o o",
-                "oooo ooooooo"
+                "                                           ",
+                "                                           ",
+                "                                           ",
+                "                                           ",
+                "                                           ",
+                "         ooo  iii  oooooooo                ",
+                "           o-         ooo    ---           ",
+                "o @      o o          ooo          ---ooooo",
+                "oooo---ooooooo------ooooo               ooo"
             ]
         );
     }
@@ -39,7 +42,10 @@ class Game{
     }
 
     render(){
-        let ctxt = this.renderHandler.getContext();
+        let ctxt = this.renderHandler.getContext(
+            ...this.gameMap.getPlayerPosition(),
+            ...this.gameMap.getMapSize(),
+        );
 
         this.gameMap.render(ctxt);
     }

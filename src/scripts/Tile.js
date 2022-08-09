@@ -5,9 +5,9 @@ class Tile{
     }
 
     render(ctxt){
-        ctxt.fillStyle = "#0099FF";
-        ctxt.strokeStyle = "#000000";
-        ctxt.strokeRect(this.x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        // ctxt.fillStyle = "#0099FF";
+        // ctxt.strokeStyle = "#000000";
+        // ctxt.strokeRect(this.x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     }
 
     update(elapsedMiliseconds){

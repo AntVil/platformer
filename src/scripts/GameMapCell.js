@@ -33,4 +33,8 @@ class GameMapCell{
     boundBottom(y, x1, x2){
         return this.content.boundBottom(y, x1, x2);
     }
+
+    getFriction(){
+        return this.content.getFriction();
+    }
 }

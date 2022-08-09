@@ -5,20 +5,27 @@ class Player{
         this.xSpeed = 0;
         this.ySpeed = 0;
 
-        this.groundTouchedElapsedMiliseconds = 0;
-        this.jumpRequestElapsedMiliseconds = 0;
+        this.groundTouchedElapsedMiliseconds = PLAYER_JUMP_REQUEST_MILISECONDS;
+        this.jumpRequestElapsedMiliseconds = PLAYER_JUMP_OFF_GROUND_REQUEST_MILISECONDS;
+        this.jumpElapsedMiliseconds = PLAYER_AFTER_JUMP_ACCELERATION_MILISECONDS;
+
+        this.jumping = false;
     }
 
     moveLeft(){
-        this.xSpeed -= PLAYER_VERTICAL_ACCELERATION;
+        this.xSpeed = Math.max(this.xSpeed - PLAYER_VERTICAL_ACCELERATION, -PLAYER_VERTICAL_MAX_SPEED);
     }
 
     moveRight(){
-        this.xSpeed += PLAYER_VERTICAL_ACCELERATION;
+        this.xSpeed = Math.min(this.xSpeed + PLAYER_VERTICAL_ACCELERATION, PLAYER_VERTICAL_MAX_SPEED);
     }
 
     jump(){
         this.jumpRequestElapsedMiliseconds = 0;
+    }
+
+    stopJump(){
+        this.jumping = false;
     }
 
     render(ctxt){
@@ -30,13 +37,14 @@ class Player{
     update(elapsedMiliseconds, nearCells){
         this.jumpRequestElapsedMiliseconds += elapsedMiliseconds;
         this.groundTouchedElapsedMiliseconds += elapsedMiliseconds;
+        this.jumpElapsedMiliseconds += elapsedMiliseconds;
 
         this.x += elapsedMiliseconds * this.xSpeed;
         this.y += elapsedMiliseconds * this.ySpeed;
 
         this.ySpeed += GRAVITATION;
 
-        this.xSpeed *= FRICTION;
+        this.xSpeed *= AIR_FRICTION;
 
         if(this.xSpeed < 0){
             if(nearCells[1][0].boundRight(this.x, this.y, this.y + PLAYER_HEIGHT)){
@@ -49,8 +57,6 @@ class Player{
                 this.xSpeed = 0;
             }
         }
-
-        let onGround = false;
 
         if(this.ySpeed < 0){
             for(let i=0;i<3;i++){
@@ -65,19 +71,29 @@ class Player{
                     this.y = nearCells[2][1].y - PLAYER_HEIGHT;
                     this.ySpeed = 0;
                     
-                    onGround = true;
+                    this.xSpeed *= nearCells[2][i].getFriction();
+                    
+                    this.groundTouchedElapsedMiliseconds = 0;
                 }
             }
         }
 
         if(this.jumpRequestElapsedMiliseconds < PLAYER_JUMP_REQUEST_MILISECONDS){
-            if(onGround || this.groundTouchedElapsedMiliseconds < PLAYER_JUMP_REQUEST_MILISECONDS){
+            if(this.groundTouchedElapsedMiliseconds < PLAYER_JUMP_OFF_GROUND_REQUEST_MILISECONDS){
                 this.ySpeed = PLAYER_JUMP_ACCELERATION;
                 
                 // prevent jump after jumping
                 this.jumpRequestElapsedMiliseconds = PLAYER_JUMP_REQUEST_MILISECONDS;
-                this.groundTouchedElapsedMiliseconds = PLAYER_JUMP_REQUEST_MILISECONDS;
+                this.groundTouchedElapsedMiliseconds = PLAYER_JUMP_OFF_GROUND_REQUEST_MILISECONDS;
+
+                this.jumping = true;
+                this.jumpElapsedMiliseconds = 0;
             }
+        }
+
+        if(this.jumping && this.jumpElapsedMiliseconds < PLAYER_AFTER_JUMP_ACCELERATION_MILISECONDS){
+            // console.log(this.jumpElapsedMiliseconds / PLAYER_AFTER_JUMP_ACCELERATION_MILISECONDS);
+            this.ySpeed += PLAYER_AFTER_JUMP_ACCELERATION * (1 - this.jumpElapsedMiliseconds / PLAYER_AFTER_JUMP_ACCELERATION_MILISECONDS);
         }
     }
 }
