@@ -5,22 +5,20 @@ class Player{
         this.xSpeed = 0;
         this.ySpeed = 0;
 
-        this.jumpAvailable = false;
+        this.groundTouchedElapsedMiliseconds = 0;
+        this.jumpRequestElapsedMiliseconds = 0;
     }
 
     moveLeft(){
-        this.xSpeed -= PLAYER_VERTICAL_ACCELERATION
+        this.xSpeed -= PLAYER_VERTICAL_ACCELERATION;
     }
 
     moveRight(){
-        this.xSpeed += PLAYER_VERTICAL_ACCELERATION
+        this.xSpeed += PLAYER_VERTICAL_ACCELERATION;
     }
 
     jump(){
-        if(this.jumpAvailable){
-            this.ySpeed = PLAYER_JUMP_ACCELERATION;
-            this.jumpAvailable = false;
-        }
+        this.jumpRequestElapsedMiliseconds = 0;
     }
 
     render(ctxt){
@@ -30,13 +28,15 @@ class Player{
     }
 
     update(elapsedMiliseconds, nearCells){
+        this.jumpRequestElapsedMiliseconds += elapsedMiliseconds;
+        this.groundTouchedElapsedMiliseconds += elapsedMiliseconds;
+
         this.x += elapsedMiliseconds * this.xSpeed;
         this.y += elapsedMiliseconds * this.ySpeed;
 
         this.ySpeed += GRAVITATION;
 
         this.xSpeed *= FRICTION;
-        //this.ySpeed *= FRICTION;
 
         if(this.xSpeed < 0){
             if(nearCells[1][0].boundRight(this.x, this.y, this.y + PLAYER_HEIGHT)){
@@ -50,6 +50,8 @@ class Player{
             }
         }
 
+        let onGround = false;
+
         if(this.ySpeed < 0){
             for(let i=0;i<3;i++){
                 if(nearCells[0][i].boundBottom(this.y, this.x, this.x + PLAYER_WIDTH)){
@@ -62,8 +64,19 @@ class Player{
                 if(nearCells[2][i].boundTop(this.y + PLAYER_HEIGHT, this.x, this.x + PLAYER_WIDTH)){
                     this.y = nearCells[2][1].y - PLAYER_HEIGHT;
                     this.ySpeed = 0;
-                    this.jumpAvailable = true;
+                    
+                    onGround = true;
                 }
+            }
+        }
+
+        if(this.jumpRequestElapsedMiliseconds < PLAYER_JUMP_REQUEST_MILISECONDS){
+            if(onGround || this.groundTouchedElapsedMiliseconds < PLAYER_JUMP_REQUEST_MILISECONDS){
+                this.ySpeed = PLAYER_JUMP_ACCELERATION;
+                
+                // prevent jump after jumping
+                this.jumpRequestElapsedMiliseconds = PLAYER_JUMP_REQUEST_MILISECONDS;
+                this.groundTouchedElapsedMiliseconds = PLAYER_JUMP_REQUEST_MILISECONDS;
             }
         }
     }
