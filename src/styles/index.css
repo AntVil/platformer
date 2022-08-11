@@ -3,6 +3,9 @@
     left: 0;
     top: 0;
     width: 100vw;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
     min-height: 100vh;
     min-height: -webkit-fill-available;
 }

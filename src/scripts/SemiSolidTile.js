@@ -4,11 +4,7 @@ class SemiSolidTile extends SolidTile{
     }
 
     render(ctxt){
-        ctxt.strokeStyle = "#000000";
-        ctxt.beginPath();
-        ctxt.moveTo(this.x * CELL_SIZE, this.y * CELL_SIZE);
-        ctxt.lineTo((this.x + 1) * CELL_SIZE, this.y * CELL_SIZE);
-        ctxt.stroke();
+        ctxt.drawImage(SEMI_SOLID_TILE_TEXTURE, this.x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     }
 
     boundLeft(y, x1, x2){

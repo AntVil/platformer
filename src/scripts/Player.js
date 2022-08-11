@@ -10,14 +10,18 @@ class Player{
         this.jumpElapsedMiliseconds = PLAYER_AFTER_JUMP_ACCELERATION_MILISECONDS;
 
         this.jumping = false;
+
+        this.direction = PLAYER_GOING_RIGHT;
     }
 
     moveLeft(){
         this.xSpeed = Math.max(this.xSpeed - PLAYER_VERTICAL_ACCELERATION, -PLAYER_VERTICAL_MAX_SPEED);
+        this.direction = PLAYER_GOING_LEFT;
     }
 
     moveRight(){
         this.xSpeed = Math.min(this.xSpeed + PLAYER_VERTICAL_ACCELERATION, PLAYER_VERTICAL_MAX_SPEED);
+        this.direction = PLAYER_GOING_RIGHT;
     }
 
     jump(){
@@ -29,9 +33,15 @@ class Player{
     }
 
     render(ctxt){
-        ctxt.fillStyle = "#0099FF";
-        ctxt.strokeStyle = "#000000";
-        ctxt.fillRect(this.x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE * PLAYER_WIDTH, CELL_SIZE * PLAYER_HEIGHT);
+        let texture = PLAYER_TEXTURE_RIGHT;
+        let x = this.x - (PLAYER_RENDER_WIDTH - PLAYER_WIDTH);
+
+        if(this.direction === PLAYER_GOING_LEFT){
+            texture = PLAYER_TEXTURE_LEFT;
+            x = this.x;
+        }
+
+        ctxt.drawImage(texture, x * CELL_SIZE, this.y * CELL_SIZE, CELL_SIZE * PLAYER_RENDER_WIDTH, CELL_SIZE * PLAYER_HEIGHT);
     }
 
     update(elapsedMiliseconds, nearCells){

@@ -35,6 +35,7 @@ class RenderHandler{
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ctxt = this.canvas.getContext("2d");
+        this.ctxt.imageSmoothingEnabled = false;
         this.game.render();
     }
 }
